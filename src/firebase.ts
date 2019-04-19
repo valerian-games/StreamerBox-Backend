@@ -8,37 +8,43 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-export async function getChannles(): Promise<string[]> {
+export class Firebase {
 
-    const channels = await db.collection("channels").get()
+    constructor() {}
 
-    let arr: string[] = []
+    async getChannles(): Promise<string[]> {
 
-    for(let doc of channels.docs) 
-        arr.push(doc.data().channel)
-
-    return Promise.resolve(arr)
-}
-
-export async function getCommands() : Promise<string[]> {
-    const commands = await db.collection("commands").get()
-
-    let arr: string[] = []
-
-    for(let doc of commands.docs) 
-        arr.push(doc.data().command)
-
-    return Promise.resolve(arr)
-}
-
-export async function live(channelName: string, command: string, from: string | undefined) {
-    const ref = db.collection("live").doc(channelName).collection("commands").doc("last")
-
-    const data = {
-        command: command,
-        from: from,
-        timestamp: admin.firestore.FieldValue.serverTimestamp()
+        const channels = await db.collection("channels").get()
+    
+        let arr: string[] = []
+    
+        for(let doc of channels.docs) 
+            arr.push(doc.data().channel)
+    
+        return Promise.resolve(arr)
     }
-
-    return ref.set(data)
+    
+    async getCommands() : Promise<string[]> {
+        const commands = await db.collection("commands").get()
+    
+        let arr: string[] = []
+    
+        for (let doc of commands.docs) 
+            arr.push(doc.data().command)
+    
+        return Promise.resolve(arr)
+    }
+    
+    
+    async live(channelName: string, command: string, from: string | undefined) {
+        const ref = db.collection("live").doc(channelName).collection("commands").doc("last")
+    
+        const data = {
+            command: command,
+            from: from,
+            timestamp: new Date()
+        }
+    
+        return ref.set(data)
+    }
 }
