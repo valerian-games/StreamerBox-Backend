@@ -75,4 +75,5 @@ typings/
 # FuseBox cache
 .fusebox/
 serviceAccountKey.json
+env.json
 dist/

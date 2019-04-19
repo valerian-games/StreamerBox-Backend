@@ -1,6 +1,8 @@
 import * as tmi from 'tmi.js'
 import * as database from './firebase'
 
+const env = require('../env.json')
+
 async function main() {
     const channels = await database.getChannles()
     const commands = await database.getCommands()
@@ -9,10 +11,7 @@ async function main() {
         options: {
             debug: true
         },
-        identity: {
-          username: "valerian_games_bot",
-          password: "oauth:6ixxyhi380gwb7pwslkpo6t9c68ifb"
-        },
+        identity: env,
         channels: channels
     };
     
@@ -30,7 +29,6 @@ async function main() {
                 database.live(channelName, c, context.username)
             }
         }
-    
     });
     
     // client.on('connected', (addr, port) => {
