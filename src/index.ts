@@ -1,7 +1,7 @@
 import * as tmi from 'tmi.js'
 import * as database from './firebase'
 
-const env = require('../env.json')
+import env from '../env.json'
 
 async function main() {
     const channels = await database.getChannles()
@@ -30,10 +30,6 @@ async function main() {
             }
         }
     });
-    
-    // client.on('connected', (addr, port) => {
-        
-    // });
     
     client.connect()
 }
