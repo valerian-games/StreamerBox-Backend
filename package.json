@@ -6,7 +6,8 @@
   "scripts": {
     "tsc": "tsc",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
-    "prod": "tsc && node ./dist/index.js"
+    "prod": "tsc && node ./dist/index.js",
+    "deploy-functions": "./node_modules/.bin/firebase deploy --only functions --token=$FIREBASE_TOKEN"
   },
   "author": "",
   "license": "ISC",
