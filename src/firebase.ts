@@ -12,7 +12,7 @@ export class Firebase {
 
     constructor() {}
 
-    async getChannles(): Promise<string[]> {
+    async getChannes(): Promise<string[]> {
 
         const channels = await db.collection("channels").get()
     
@@ -34,7 +34,24 @@ export class Firebase {
     
         return Promise.resolve(arr)
     }
+
+    getChannel(channelName: string) {
+        return db.doc(`live/${channelName}`).get()
+    }
     
+    async getGameCommands(gameName: string): Promise<string[]> {
+        const game = await db.doc(`games/${gameName}`).get()
+        const data = game.data()
+
+        let commands: string[] = []
+
+        if (data == undefined) 
+            return Promise.resolve(commands)
+            
+        commands = data.commands
+
+        return Promise.resolve(commands)
+    }
     
     async live(channelName: string, command: string, from: string | undefined) {
         const ref = db.collection("live").doc(channelName).collection("commands").doc("last")
