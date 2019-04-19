@@ -1,7 +1,7 @@
 import * as tmi from 'tmi.js'
 import * as database from './firebase'
 
-import env from '../env.json'
+const env = require('../env.json')
 
 async function main() {
     const channels = await database.getChannles()
