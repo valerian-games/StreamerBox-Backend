@@ -31,10 +31,6 @@ async function main() {
         }
     });
     
-    // client.on('connected', (addr, port) => {
-        
-    // });
-    
     client.connect()
 }
 

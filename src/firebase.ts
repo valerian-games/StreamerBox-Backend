@@ -31,7 +31,7 @@ export async function getCommands() : Promise<string[]> {
     return Promise.resolve(arr)
 }
 
-export function live(channelName: string, command: string, from: string | undefined) {
+export async function live(channelName: string, command: string, from: string | undefined) {
     const ref = db.collection("live").doc(channelName).collection("commands").doc("last")
 
     const data = {
