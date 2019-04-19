@@ -20,4 +20,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: echo $SERVICE_ACCOUNT | base64 --decode > ${HOME}/serviceAccountKey.json
+      - run: echo $ENV | base64 --decode > ${HOME}/env.json
       - run: npm run tsc
+      - run: cd functions; npm install
+      - run: ../node_modules/.bin/firebase deploy --only functions --token "$FIREBASE_TOKEN"

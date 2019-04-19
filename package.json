@@ -13,6 +13,7 @@
   "dependencies": {
     "@types/tmi.js": "^1.4.0",
     "firebase-admin": "^7.3.0",
+    "firebase-tools": "^6.7.0",
     "tmi.js": "^1.4.2",
     "ts-node-dev": "^1.0.0-pre.32",
     "typescript": "^3.4.3"
