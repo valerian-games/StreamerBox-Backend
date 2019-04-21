@@ -49,7 +49,7 @@ export const oAuthRedirect = functions.https.onRequest((req, res) => {
     const queryParams = { 
         ...defaultParams,
         response_type: 'code',
-        scope: 'wallet:accounts:read',
+        scope: 'user:read:email+channel:read:subscriptions',
         state: crypto.randomBytes(20).toString('hex')
     }
     const endpoint = base + qs.stringify( queryParams )
