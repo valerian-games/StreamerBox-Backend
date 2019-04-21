@@ -25,7 +25,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: echo $SERVICE_ACCOUNT | base64 --decode > ${HOME}/serviceAccountKey.json
-      - run: sudo cp /home/circleci/serviceAccountKey.json /home/circleci/functions
+      - run: sudo cp /home/circleci/serviceAccountKey.json /home/circleci/project/functions
       - run: echo $ENV | base64 --decode > ${HOME}/env.json
       - run: cd functions; npm install
       - run: npm run tsc
