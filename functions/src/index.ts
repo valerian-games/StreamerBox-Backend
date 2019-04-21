@@ -9,7 +9,7 @@ import * as crypto from 'crypto'
 import * as qs from 'querystring'
 import axios from 'axios'
 
-import CORS from 'cors'
+import * as CORS from 'cors'
 const cors = CORS({ origin: true })
 
 const redirect_uri  = 'http://localhost:4200/c/redirect'
