@@ -98,19 +98,16 @@ async function mintAuthToken(req: functions.https.Request): Promise<string> {
     const userData = {
         displayName: user.display_name,
         email: user.email,
-        photoURL: user.profile_image_url
-    }
-
-    await auth.updateUser(uid, userData)
-    await db.doc(`users/${uid}`).set({
-        ...userData,
+        photoURL: user.profile_image_url,
         id: user.id,
         uid: user.uid,
         viewCount: user.view_count,
         type: user.type,
         description: user.description,
         offlinePhotoURL: user.offline_image_url
-    })
+    }
+
+    await db.doc(`users/${uid}`).set(userData, { merge: true })
     await db.doc(`twitchTokens/${uid}`).set({ accessToken, refreshToken }, { merge: true })
 
     return authToken
