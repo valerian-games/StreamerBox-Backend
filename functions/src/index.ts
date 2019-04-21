@@ -1,9 +1,15 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 
-admin.initializeApp();
+const serviceAccount = require('../serviceAccountKey.json');
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://valerian-games-dev.firebaseio.com"
+});
 
 const db = admin.firestore()
+const auth = admin.auth()
 
 import * as crypto from 'crypto'
 import * as qs from 'querystring'
@@ -85,11 +91,27 @@ async function mintAuthToken(req: functions.https.Request): Promise<string> {
     const refreshToken = login.data.refresh_token
 
     const user      = await getTwitchUser(accessToken)
-    const uid       = 'twitch:' + user.id
+    const uid       = user.display_name
 
-    const authToken = await admin.auth().createCustomToken(uid);
-
-    await admin.database().ref(`twitchTokens/${uid}`).update({ accessToken, refreshToken })
+    const authToken = await auth.createCustomToken(uid);
+    
+    const userData = {
+        displayName: user.display_name,
+        email: user.email,
+        photoURL: user.profile_image_url
+    }
+    
+    await auth.updateUser(uid, userData)
+    await db.doc(`users/${uid}`).set({
+        ...userData,
+        id: user.id,
+        uid: user.uid,
+        viewCount: user.view_count,
+        type: user.type,
+        description: user.description,
+        offlinePhotoURL: user.offline_image_url
+    })
+    await db.doc(`twitchTokens/${uid}`).set({ accessToken, refreshToken }, { merge: true })
     
     return authToken
 }
@@ -99,5 +121,5 @@ async function getTwitchUser(accessToken: string): Promise<any> {
 
     const user = await axios.get(userUrl, { headers: { 'Authorization': `Bearer ${accessToken}` } });
 
-    return user.data.data
+    return user.data.data[0]
 }
