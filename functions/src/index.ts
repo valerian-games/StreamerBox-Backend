@@ -18,14 +18,14 @@ import axios from 'axios'
 import CORS = require('cors');
 const cors = CORS({ origin: true })
 
-const redirect_uri  = 'http://localhost:4200/c/redirect'
+const redirect_uri = 'http://localhost:4200/c/redirect'
 
 const firebaseConfig = functions.config()
 const client_id = firebaseConfig.twitch.id;
 const client_secret = firebaseConfig.twitch.secret;
 
-const defaultParams = { 
-    client_id, 
+const defaultParams = {
+    client_id,
     redirect_uri
 }
 
@@ -46,30 +46,30 @@ export const liveLastCommand
 
             return db
                 .doc(`live/${channelName}`)
-                .set({lastCommand: timestamp}, {merge: true})
+                .set({ lastCommand: timestamp }, { merge: true })
         })
 
 export const oAuthRedirect = functions.https.onRequest((req, res) => {
     const base = 'https://id.twitch.tv/oauth2/authorize?';
 
-    const queryParams = { 
+    const queryParams = {
         ...defaultParams,
         response_type: 'code',
         state: crypto.randomBytes(20).toString('hex')
     }
-    let endpoint = base + qs.stringify( queryParams )
+    let endpoint = base + qs.stringify(queryParams)
 
     endpoint += '&scope=user:read:email+channel:read:subscriptions'
 
-    res.redirect(endpoint);  
+    res.redirect(endpoint);
 })
 
 export const token = functions.https.onRequest((req, res) => {
-    cors( req, res, () => { 
-        
+    cors(req, res, () => {
+
         return mintAuthToken(req)
-                .then(authToken => res.json({ authToken }))
-                .catch(err => console.log(err))
+            .then(authToken => res.json({ authToken }))
+            .catch(err => console.log(err))
 
     });
 });
@@ -77,30 +77,30 @@ export const token = functions.https.onRequest((req, res) => {
 async function mintAuthToken(req: functions.https.Request): Promise<string> {
     const base = 'https://id.twitch.tv/oauth2/token?'
 
-    const queryParams = { 
+    const queryParams = {
         ...defaultParams,
         client_secret,
         grant_type: 'authorization_code',
         code: req.query.code
     }
 
-    const endpoint = base + qs.stringify( queryParams )
+    const endpoint = base + qs.stringify(queryParams)
 
-    const login        = await axios.post(endpoint);
-    const accessToken  = login.data.access_token
+    const login = await axios.post(endpoint);
+    const accessToken = login.data.access_token
     const refreshToken = login.data.refresh_token
 
-    const user      = await getTwitchUser(accessToken)
-    const uid       = user.display_name
+    const user = await getTwitchUser(accessToken)
+    const uid = user.display_name
 
     const authToken = await auth.createCustomToken(uid);
-    
+
     const userData = {
         displayName: user.display_name,
         email: user.email,
         photoURL: user.profile_image_url
     }
-    
+
     await auth.updateUser(uid, userData)
     await db.doc(`users/${uid}`).set({
         ...userData,
@@ -112,7 +112,7 @@ async function mintAuthToken(req: functions.https.Request): Promise<string> {
         offlinePhotoURL: user.offline_image_url
     })
     await db.doc(`twitchTokens/${uid}`).set({ accessToken, refreshToken }, { merge: true })
-    
+
     return authToken
 }
 
