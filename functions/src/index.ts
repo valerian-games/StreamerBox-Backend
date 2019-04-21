@@ -9,7 +9,7 @@ import * as crypto from 'crypto'
 import * as qs from 'querystring'
 import axios from 'axios'
 
-import * as CORS from 'cors'
+import CORS = require('cors');
 const cors = CORS({ origin: true })
 
 const redirect_uri  = 'http://localhost:4200/c/redirect'
@@ -30,8 +30,8 @@ export const liveLastCommand
         .onWrite((change, context) => {
             const data = change.before.data()
             const channelName = context.params.channelName
-            const command = context.params.channelCollections == "commands"
-            const last = context.params.commandId == "last"
+            const command = context.params.channelCollections === "commands"
+            const last = context.params.commandId === "last"
 
             if (data == undefined || !command || !last)
                 return null
